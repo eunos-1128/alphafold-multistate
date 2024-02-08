@@ -71,13 +71,14 @@ def main():
     else:
         db_home = pathlib.Path(gpcr100_inactive_db_path)
         cif_home = pathlib.Path(mmcif_inactive_db_path)
-    db_home = db_home.parent
+    # db_home = db_home.parent
     #
     for name in ["hhm", "a3m", "cs219"]:
         for suffix in ["ffindex", "ffdata"]:
             src_fn = db_home / f"GPCR100.{conformational_state}_{name}.{suffix}"
             dst_fn = gpcr100_dir / f"GPCR100.{conformational_state}_{name}.{suffix}"
             if not dst_fn.exists():
+                # os.unlink(src_fn)
                 os.symlink(src_fn, dst_fn)
     for src_fn in cif_home.glob("*.cif"):
         dst_fn = mmcif_dir / src_fn.name

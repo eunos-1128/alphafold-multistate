@@ -51,9 +51,9 @@ flags.DEFINE_string(
     'fasta_path', None, 'Paths to a FASTA file, If the FASTA file contains '
     'multiple sequences, then it will be folded as a multimer. ')
 
-flags.DEFINE_string('data_dir', libconfig_af.data_dir, 
+flags.DEFINE_string('data_dir', libconfig_af.data_dir,
         'Path to directory of supporting data.')
-flags.DEFINE_string('output_dir', os.getcwd(), 
+flags.DEFINE_string('output_dir', os.getcwd(),
         'Path to a directory that will store the results.')
 
 # paths to executables
@@ -71,28 +71,28 @@ flags.DEFINE_string('kalign_binary_path', libconfig_af.kalign_binary_path,
                     'Path to the Kalign executable.')
 
 # paths to databases
-flags.DEFINE_string('uniref90_database_path', libconfig_af.uniref90_database_path, 
+flags.DEFINE_string('uniref90_database_path', libconfig_af.uniref90_database_path,
         'Path to the Uniref90 database for use by JackHMMER.')
-flags.DEFINE_string('mgnify_database_path', libconfig_af.mgnify_database_path, 
+flags.DEFINE_string('mgnify_database_path', libconfig_af.mgnify_database_path,
         'Path to the MGnify database for use by JackHMMER.')
-flags.DEFINE_string('bfd_database_path', libconfig_af.bfd_database_path, 
+flags.DEFINE_string('bfd_database_path', libconfig_af.bfd_database_path,
         'Path to the BFD database for use by HHblits.')
 flags.DEFINE_string('small_bfd_database_path', libconfig_af.small_bfd_database_path,
         'Path to the small version of BFD used with the "reduced_dbs" preset.')
-flags.DEFINE_string('uniref30_database_path', libconfig_af.uniref30_database_path, 
+flags.DEFINE_string('uniref30_database_path', libconfig_af.uniref30_database_path,
         'Path to the uniref30 database for use by HHblits.')
-flags.DEFINE_string('uniprot_database_path', libconfig_af.uniprot_database_path, 
+flags.DEFINE_string('uniprot_database_path', libconfig_af.uniprot_database_path,
         'Path to the Uniprot database for use by JackHMMer.')
-flags.DEFINE_string('pdb70_database_path', libconfig_af.pdb70_database_path, 
+flags.DEFINE_string('pdb70_database_path', libconfig_af.pdb70_database_path,
         'Path to the PDB70 database for use by HHsearch.')
-flags.DEFINE_string('pdb_seqres_database_path', libconfig_af.pdb_seqres_database_path, 
+flags.DEFINE_string('pdb_seqres_database_path', libconfig_af.pdb_seqres_database_path,
         'Path to the PDB seqres database for use by hmmsearch.')
-flags.DEFINE_string('template_mmcif_dir', libconfig_af.template_mmcif_dir, 
+flags.DEFINE_string('template_mmcif_dir', libconfig_af.template_mmcif_dir,
         'Path to a directory with template mmCIF structures, each named <pdb_id>.cif')
-flags.DEFINE_string('max_template_date', libconfig_af.max_template_date, 
+flags.DEFINE_string('max_template_date', libconfig_af.max_template_date,
         'Maximum template release date to consider. '
         'Important if folding historical test sets.')
-flags.DEFINE_string('obsolete_pdbs_path', libconfig_af.obsolete_pdbs_path, 
+flags.DEFINE_string('obsolete_pdbs_path', libconfig_af.obsolete_pdbs_path,
         'Path to file containing a mapping from obsolete PDB IDs to the PDB IDs'
         'of their replacements.')
 
@@ -107,7 +107,7 @@ flags.DEFINE_enum('model_preset', 'monomer',
                   'Choose preset model configuration - the monomer model, '
                   'the monomer model with extra ensembling, monomer model with '
                   'pTM head, or multimer model')
-flags.DEFINE_integer('random_seed', None, 'The random seed for the data '
+flags.DEFINE_integer('random_seed', random.randint(-2**31, 2**31 - 1), 'The random seed for the data '
                      'pipeline. By default, this is randomly generated. Note '
                      'that even if this is set, Alphafold may still not be '
                      'deterministic, because processes like GPU inference are '
@@ -472,7 +472,7 @@ def main(argv):
         use_small_bfd=use_small_bfd,
         use_msa=FLAGS.use_msa,
         use_precomputed_msas=FLAGS.use_precomputed_msas,
-        is_multimer=FLAGS.multimer, 
+        is_multimer=FLAGS.multimer,
         n_cpu=FLAGS.cpu)
     if run_multimer_system:
         num_predictions_per_model = FLAGS.num_multimer_predictions_per_model
@@ -483,7 +483,7 @@ def main(argv):
             use_precomputed_msas=FLAGS.use_precomputed_msas,
             n_cpu=FLAGS.cpu)
     else:
-        num_predictions_per_model = 1
+        num_predictions_per_model = 50
         data_pipeline = monomer_data_pipeline
 
     #
@@ -494,6 +494,8 @@ def main(argv):
 
     model_runners = {}
     model_names = config.MODEL_PRESETS[FLAGS.model_preset]
+
+
     for i,model_name in enumerate(model_names):
         if i not in FLAGS.model_names:
             continue
@@ -513,7 +515,7 @@ def main(argv):
         #
         model_params = data.get_model_haiku_params(
                 model_name=model_name, data_dir=FLAGS.data_dir)
-        model_runner = model.RunModel(model_config, model_params, 
+        model_runner = model.RunModel(model_config, model_params,
                 jit_compile=FLAGS.jit)
         for i in range(num_predictions_per_model):
             model_runners[f'{model_name}_pred_{i}'] = model_runner
@@ -528,17 +530,17 @@ def main(argv):
             tolerance=RELAX_ENERGY_TOLERANCE,
             stiffness=RELAX_STIFFNESS,
             exclude_residues=RELAX_EXCLUDE_RESIDUES,
-            max_outer_iterations=RELAX_MAX_OUTER_ITERATIONS, 
+            max_outer_iterations=RELAX_MAX_OUTER_ITERATIONS,
             use_gpu=FLAGS.use_gpu_relax)
     else:
         amber_relaxer = None
- 
+
     # RANDOMSEED
     random_seed = FLAGS.random_seed
     if random_seed is None:
         random_seed = random.randrange((sys.maxsize) // len(model_names))
     logging.info('Using random seed %d for the data pipeline', random_seed)
- 
+
     # RUN PREDICTION
     predict_structure(
             fasta_path=FLAGS.fasta_path,
@@ -550,7 +552,7 @@ def main(argv):
             model_runners=model_runners,
             amber_relaxer=amber_relaxer,
             remove_msa_for_template_aligned=FLAGS.remove_msa_for_template_aligned,
-            template_mask=FLAGS.template_mask, 
+            template_mask=FLAGS.template_mask,
             feature_only=FLAGS.feature_only,
             random_seed=random_seed,
             )

@@ -15,12 +15,12 @@ conda create --name $ENVNAME -y -c conda-forge -c nvidia -c bioconda\
     hhsuite \
     kalign3 \
     hmmer \
-    pip 
+    pip
 
 source activate $ENVNAME
 
-pip install --upgrade pip 
-pip3 install -r requirements.txt 
+pip install --upgrade pip
+pip3 install -r requirements.txt
 pip3 uninstall -yq jax jaxlib
 pip3 install "jax[cuda]==0.3.25" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 
@@ -44,5 +44,5 @@ do
 done
 
 # IF you want to use ColabFold interface, uncomment the following and install ColabFold
-# pip install --no-warn-conflicts -q "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold@v1.5.2"
+pip install --no-warn-conflicts -q "colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold@v1.5.2"
 
