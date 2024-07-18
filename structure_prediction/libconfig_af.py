@@ -48,6 +48,13 @@ template_mmcif_dir = os.path.join(data_dir, "pdb_mmcif", "mmcif_files")
 obsolete_pdbs_path = os.path.join(data_dir, "pdb_mmcif", "obsolete.dat")
 
 max_template_date = "2099-12-31"
+num_predictions_per_model = 50
+
+model_preset = 'monomer_ptm'
+model_names = [
+    1, 
+    2
+]
 
 os.environ["NVIDIA_VISIBLE_DEVICES"] = os.getenv("NVIDIA_VISIBLE_DEVICES", "")
 os.environ["TF_FORCE_UNIFIED_MEMORY"] = os.getenv("TF_FORCE_UNIFIED_MEMORY")
@@ -60,14 +67,6 @@ if os.getenv("NVIDIA_VISIBLE_DEVICES", "") == "":
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 N_PROC = int(os.getenv("SLURM_CPUS_PER_TASK", 8))
-
-model_names = [
-    "model_1",
-    "model_2",
-    "model_3",
-    "model_4",
-    "model_5",
-]
 
 script_home = os.path.dirname(os.path.abspath(__file__))
 exec_run_alphafold = os.path.join(script_home, "run_af.py")

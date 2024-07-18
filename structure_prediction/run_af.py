@@ -55,6 +55,18 @@ flags.DEFINE_string('data_dir', libconfig_af.data_dir,
         'Path to directory of supporting data.')
 flags.DEFINE_string('output_dir', os.getcwd(),
         'Path to a directory that will store the results.')
+flags.DEFINE_integer('random_seed', -1, 
+                     'The random seed for the data '
+                     'pipeline. By default, this is randomly generated. Note '
+                     'that even if this is set, Alphafold may still not be '
+                     'deterministic, because processes like GPU inference are '
+                     'nondeterministic.')
+flags.DEFINE_integer('num_predictions_per_model', libconfig_af.num_predictions_per_model, 
+                     'The random seed for the data '
+                     'pipeline. By default, this is randomly generated. Note '
+                     'that even if this is set, Alphafold may still not be '
+                     'deterministic, because processes like GPU inference are '
+                     'nondeterministic.')
 
 # paths to executables
 flags.DEFINE_string('jackhmmer_binary_path', libconfig_af.jackhmmer_binary_path,
@@ -95,6 +107,12 @@ flags.DEFINE_string('max_template_date', libconfig_af.max_template_date,
 flags.DEFINE_string('obsolete_pdbs_path', libconfig_af.obsolete_pdbs_path,
         'Path to file containing a mapping from obsolete PDB IDs to the PDB IDs'
         'of their replacements.')
+flags.DEFINE_enum('model_preset', libconfig_af.model_preset,
+                  ['monomer', 'monomer_casp14', 'monomer_ptm', 'multimer'],
+                  'Choose preset model configuration - the monomer model, '
+                  'the monomer model with extra ensembling, monomer model with '
+                  'pTM head, or multimer model')
+flags.DEFINE_list("model_names", libconfig_af.model_names, "Model configs to be run")
 
 # presets
 flags.DEFINE_enum('db_preset', 'full_dbs',
@@ -102,16 +120,6 @@ flags.DEFINE_enum('db_preset', 'full_dbs',
                   'Choose preset MSA database configuration - '
                   'smaller genetic database config (reduced_dbs) or '
                   'full genetic database config  (full_dbs)')
-flags.DEFINE_enum('model_preset', 'monomer',
-                  ['monomer', 'monomer_casp14', 'monomer_ptm', 'multimer'],
-                  'Choose preset model configuration - the monomer model, '
-                  'the monomer model with extra ensembling, monomer model with '
-                  'pTM head, or multimer model')
-flags.DEFINE_integer('random_seed', random.randint(-2**31, 2**31 - 1), 'The random seed for the data '
-                     'pipeline. By default, this is randomly generated. Note '
-                     'that even if this is set, Alphafold may still not be '
-                     'deterministic, because processes like GPU inference are '
-                     'nondeterministic.')
 flags.DEFINE_integer('num_multimer_predictions_per_model', 5, 'How many '
                      'predictions (each with a different random seed) will be '
                      'generated per model. E.g. if this is 2 and there are 5 '
@@ -133,7 +141,6 @@ flags.DEFINE_boolean("remove_msa_for_template_aligned", False, \
                     'Remove MSA information for template aligned region')
 flags.DEFINE_integer("max_msa_clusters", None, 'Number of maximum MSA clusters')
 flags.DEFINE_integer("max_extra_msa", None, 'Number of extra sequences')
-flags.DEFINE_list("model_names", None, "Model configs to be run")
 flags.DEFINE_list("msa_path", None, "User input MSA")
 flags.DEFINE_list("pdb_path", None, "User input structure")
 flags.DEFINE_boolean("unk_pdb", False, "Make input PDB residue names UNK")
@@ -483,22 +490,21 @@ def main(argv):
             use_precomputed_msas=FLAGS.use_precomputed_msas,
             n_cpu=FLAGS.cpu)
     else:
-        num_predictions_per_model = 50
+        num_predictions_per_model = libconfig_af.num_predictions_per_model
         data_pipeline = monomer_data_pipeline
 
     #
     if FLAGS.model_names is None:
-        FLAGS.model_names = [0, 1, 2, 3, 4]
-    else:
-        FLAGS.model_names = [int(x) for x in FLAGS.model_names]
+        FLAGS.model_names = [1, 2, 3, 4, 5]
 
     model_runners = {}
     model_names = config.MODEL_PRESETS[FLAGS.model_preset]
+    logging.info('Using models %s for the data pipeline', model_names)
 
-
-    for i,model_name in enumerate(model_names):
+    for i, model_name in enumerate(model_names, start=1):
         if i not in FLAGS.model_names:
             continue
+        
         model_config = config.model_config(model_name)
         if run_multimer_system:
             model_config.model.num_ensemble_eval = num_ensemble
@@ -517,8 +523,10 @@ def main(argv):
                 model_name=model_name, data_dir=FLAGS.data_dir)
         model_runner = model.RunModel(model_config, model_params,
                 jit_compile=FLAGS.jit)
-        for i in range(num_predictions_per_model):
-            model_runners[f'{model_name}_pred_{i}'] = model_runner
+        for j in range(num_predictions_per_model):
+            random_seed = FLAGS.random_seed + j
+            logging.info('Using random seed %d for the data pipeline', random_seed)
+            model_runners[f'{model_name=}_{random_seed=}'] = model_runner
 
     logging.info('Have %d models: %s', \
             len(model_runners), list(model_runners.keys()))
@@ -536,10 +544,9 @@ def main(argv):
         amber_relaxer = None
 
     # RANDOMSEED
-    random_seed = FLAGS.random_seed
-    if random_seed is None:
+    if random_seed == -1:
         random_seed = random.randrange((sys.maxsize) // len(model_names))
-    logging.info('Using random seed %d for the data pipeline', random_seed)
+        logging.info('Using random seed %d for the data pipeline', random_seed)
 
     # RUN PREDICTION
     predict_structure(

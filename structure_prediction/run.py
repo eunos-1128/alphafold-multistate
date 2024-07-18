@@ -37,7 +37,11 @@ def set_presets(arg):
 
 def main():
     arg = argparse.ArgumentParser(prog="run_multi-state_modeling")
-    arg.add_argument(dest="fa_fn", help="input FASTA file")
+    arg.add_argument(
+        "--fasta",
+        dest="fa_fn",
+        help="input FASTA file"
+    )
     arg.add_argument(
         "-p",
         "--preset",
@@ -97,6 +101,22 @@ def main():
         action="store_true",
         help="whether to remove MSA input features for template aligned region (default=False)",
     )
+    arg.add_argument(
+        "--random_seed",
+        dest="ramdom_seed",
+        default=-1,
+        type=int,
+        help="Random seed",
+    )
+    
+    arg.add_argument(
+        "--num_predictions_per_model",
+        dest="num_predictions_per_model",
+        default=1,
+        type=int,
+        help="Number of predictions per model",
+    )
+    
     if len(sys.argv) == 1:
         arg.print_help()
         return
@@ -112,11 +132,11 @@ def main():
     if arg.state == "none":
         structure_db_path = libconfig_af.pdb70_database_path
     elif arg.state == "active":
-        # structure_db_path = libconfig_af.gpcr100_active_db_path
-        structure_db_path = libconfig_af.kinase100_active_db_path
+        structure_db_path = libconfig_af.gpcr100_active_db_path
+        # structure_db_path = libconfig_af.kinase100_active_db_path
     elif arg.state == "inactive":
-        # structure_db_path = libconfig_af.gpcr100_inactive_db_path
-        structure_db_path = libconfig_af.kinase100_inactive_db_path
+        structure_db_path = libconfig_af.gpcr100_inactive_db_path
+        # structure_db_path = libconfig_af.kinase100_inactive_db_path
 
     if arg.seq_id_cutoff > 100.0:
         sys.exit("ERROR: sequence identity cutoff should be <= 100%\n")
@@ -130,6 +150,9 @@ def main():
     cmd = [EXEC]
     cmd.append("--fasta_path=%s" % arg.fa_fn)
     cmd.append("--output_dir=%s" % arg.output_dir)
+    cmd.append("--random_seed=%d" % arg.ramdom_seed)
+    cmd.append("--num_predictions_per_model=%s" % arg.num_predictions_per_model)
+    
     if arg.modeling_tool == "alphafold":
         if arg.use_templates:
             cmd.append("--use_templates=true")

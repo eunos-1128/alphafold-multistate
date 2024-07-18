@@ -41,6 +41,14 @@ def main():
         choices=["active", "inactive"],
         help="modeling state (default=inactive)",
     )
+    arg.add_argument(
+        "-r",
+        "--random_seed",
+        dest="random_seed",
+        type=int,
+        default=-1,
+        help="Random seed",
+    )
     #
     if len(sys.argv) == 1:
         arg.print_help()
@@ -52,7 +60,7 @@ def main():
     jobname = arg.fa_fn.stem
     queries = [(jobname, read_sequence(arg.fa_fn), None)]
     #
-    result_dir = pathlib.Path(arg.output_dir) / jobname
+    result_dir = pathlib.Path(arg.output_dir)
     if not result_dir.exists():
         result_dir.mkdir(parents=True)
     #
