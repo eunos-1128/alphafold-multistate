@@ -526,7 +526,7 @@ def main(argv):
         for j in range(num_predictions_per_model):
             random_seed = FLAGS.random_seed + j
             logging.info('Using random seed %d for the data pipeline', random_seed)
-            model_runners[f'{model_name=}_{random_seed=}'] = model_runner
+            model_runners[f'{model_name}_random_seed-{random_seed}'] = model_runner
 
     logging.info('Have %d models: %s', \
             len(model_runners), list(model_runners.keys()))
