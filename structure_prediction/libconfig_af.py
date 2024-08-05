@@ -50,7 +50,7 @@ obsolete_pdbs_path = os.path.join(data_dir, "pdb_mmcif", "obsolete.dat")
 max_template_date = "2018-04-30"
 num_predictions_per_model = 50
 
-model_preset = 'monomer_ptm'
+model_preset = 'monomer'
 model_names = [
     1, 
     2
