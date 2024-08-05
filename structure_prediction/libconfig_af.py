@@ -47,7 +47,7 @@ template_mmcif_dir = os.path.join(data_dir, "pdb_mmcif", "mmcif_files")
 # Path to a file mapping obsolete PDB IDs to their replacements.
 obsolete_pdbs_path = os.path.join(data_dir, "pdb_mmcif", "obsolete.dat")
 
-max_template_date = "2099-12-31"
+max_template_date = "2018-04-30"
 num_predictions_per_model = 50
 
 model_preset = 'monomer_ptm'
