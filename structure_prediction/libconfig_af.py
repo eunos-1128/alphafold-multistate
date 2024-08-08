@@ -17,7 +17,7 @@ data_dir = "/app/alphafold_db"
 uniref90_database_path = os.path.join(data_dir, "uniref90", "uniref90.fasta")
 
 # Path to the MGnify database for use by JackHMMER.
-mgnify_database_path = os.path.join(data_dir, "mgnify.old", "mgy_clusters_2018_12.fa")
+mgnify_database_path = os.path.join(data_dir, "mgnify_2022_05", "mgy_clusters_2022_05.fa")
 
 # Path to the BFD database for use by HHblits.
 bfd_database_path = os.path.join(
@@ -29,7 +29,7 @@ small_bfd_database_path = os.path.join(
 
 # Path to the UniRef30 database for use by HHblits.
 uniref30_database_path = os.path.join(
-    data_dir, "uniclust30/uniclust30_2018_08", "uniclust30_2018_08"
+    data_dir, "uniref30_2023", "UniRef30_2023_02"
 )
 
 # Path to the UniProt database for used by JackHMMer.
