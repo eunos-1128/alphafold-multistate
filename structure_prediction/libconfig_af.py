@@ -3,7 +3,6 @@
 import getpass
 import os
 
-
 jackhmmer_binary_path = "/opt/conda/bin/jackhmmer"
 hhblits_binary_path = "/opt/conda/bin/hhblits"
 hhsearch_binary_path = "/opt/conda/bin/hhsearch"

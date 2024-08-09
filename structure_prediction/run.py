@@ -152,6 +152,7 @@ def main():
     cmd.append("--output_dir=%s" % arg.output_dir)
     cmd.append("--random_seed=%d" % arg.ramdom_seed)
     cmd.append("--num_predictions_per_model=%s" % arg.num_predictions_per_model)
+    cmd.append("--state=%s" % arg.state)
     
     if arg.modeling_tool == "alphafold":
         if arg.use_templates:

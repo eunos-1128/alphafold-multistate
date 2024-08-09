@@ -157,6 +157,8 @@ flags.DEFINE_boolean("use_gpu_relax", False, 'Whether to relax on GPU.'
 flags.DEFINE_boolean("preset_refine", False, "Running refinement mode."
         'same as "--use_templates=False --use_msa=False --model_names=0 --unk_pdb=True'
         'requires --pdb_path')
+flags.DEFINE_string("state", None, "Conformational state")
+
 
 FLAGS = flags.FLAGS
 
@@ -526,7 +528,7 @@ def main(argv):
         for j in range(num_predictions_per_model):
             random_seed = FLAGS.random_seed + j
             logging.info('Using random seed %d for the data pipeline', random_seed)
-            model_runners[f'{model_name}_random_seed-{random_seed}'] = model_runner
+            model_runners[f'{model_name}_random_seed-{random_seed}_state-{FLAGS.state}'] = model_runner
 
     logging.info('Have %d models: %s', \
             len(model_runners), list(model_runners.keys()))
