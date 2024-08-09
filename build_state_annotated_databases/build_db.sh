@@ -3,7 +3,7 @@
 PDB_LIST=$1
 
 N_PROC=32
-UNICLUST30=""
+UNICLUST30="/home/SHARED_DATA/sekkei/alphafold_db/uniref30_2023"
 if [[ $UNICLUST30 == "" ]]; then
     echo "NEED TO SET UNICLUST30 database path"
     echo "http://gwdu111.gwdg.de/~compbiol/uniclust/2020_06/"
@@ -23,8 +23,8 @@ done
 cd ..
 
 # write FASTA files
-cif2fasta.py -i cif.$suffix -o GPCR.$suffix.fas -c $N_PROC -p pdb_filter.$suffix.dat
-python select_GPCR_only.py GPCR.chains pdb_filter.$suffix.dat GPCR.$suffix.fas
+${HOME}/miniconda3/envs/mmseqs2/scripts/cif2fasta.py -i cif.$suffix -o GPCR.$suffix.fas -c $N_PROC -p pdb_filter.$suffix.dat
+python3 select_GPCR_only.py GPCR.chains pdb_filter.$suffix.dat GPCR.$suffix.fas
 
 # cluster
 mkdir -p cluster.$suffix
@@ -32,14 +32,14 @@ mmseqs createdb GPCR.$suffix.fas cluster.$suffix/GPCR.$suffix
 mmseqs cluster cluster.$suffix/GPCR.$suffix cluster.$suffix/GPCR100_clu.$suffix /scratch/clustering -c 1.0 --min-seq-id 1.0
 mmseqs createtsv cluster.$suffix/GPCR.$suffix cluster.$suffix/GPCR.$suffix cluster.$suffix/GPCR100_clu.$suffix cluster.$suffix/GPCR100_clu.$suffix.tsv
 
-pdbfilter.py GPCR.$suffix.fas cluster.$suffix/GPCR100_clu.$suffix.tsv pdb_filter.$suffix.dat GPCR100.$suffix.fas
+${HOME}/miniconda3/envs/mmseqs2/scripts/pdbfilter.py GPCR.$suffix.fas cluster.$suffix/GPCR100_clu.$suffix.tsv pdb_filter.$suffix.dat GPCR100.$suffix.fas
 
 db=GPCR100.$suffix
 ffindex_from_fasta -s $db.fas.ff{data,index} $db.fas
 
 # generate MSA files
 mkdir -p msa.$suffix
-python split_fasta.py $db.fas msa.$suffix
+python3 split_fasta.py $db.fas msa.$suffix
 cd msa.$suffix
 ../run_hhblits.sh   $UNICLUST30
 cd ..
