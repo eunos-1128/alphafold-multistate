@@ -17,7 +17,7 @@ data_dir = "/app/alphafold_db"
 uniref90_database_path = os.path.join(data_dir, "uniref90", "uniref90.fasta")
 
 # Path to the MGnify database for use by JackHMMER.
-mgnify_database_path = os.path.join(data_dir, "mgnify_2022_05", "mgy_clusters_2022_05.fa")
+mgnify_database_path = os.path.join(data_dir, "mgnify", "mgy_clusters_2022_05.fa")
 
 # Path to the BFD database for use by HHblits.
 bfd_database_path = os.path.join(
@@ -72,20 +72,20 @@ script_home = os.path.dirname(os.path.abspath(__file__))
 exec_run_alphafold = os.path.join(script_home, "run_af.py")
 exec_run_tbm = os.path.join(script_home, "run_tbm.py")
 
-gpcr100_active_db_path = "/app/alphafold-multistate/db/GPCR100.ACTIVE/GPCR100.Active"
+gpcr100_active_db_path = "/app/alphafold-multistate/db/zenodo-v3/GPCR100.Active/GPCR100.Active"
 gpcr100_inactive_db_path = (
-    "/app/alphafold-multistate/db/GPCR100.INACTIVE/GPCR100.Inactive"
+    "/app/alphafold-multistate/db/zenodo-v3/GPCR100.Inactive/GPCR100.Inactive"
 )
 
-gpcr100_mmcif_active_db_path = "/app/alphafold-multistate/db/GPCR100.ACTIVE/cif.active"
+gpcr100_mmcif_active_db_path = "/app/alphafold-multistate/db/zenodo-v3/cif.Active"
 gpcr100_mmcif_inactive_db_path = (
-    "/app/alphafold-multistate/db/GPCR100.INACTIVE/cif.inactive"
+    "/app/alphafold-multistate/db/zenodo-v3/cif.Inactive"
 )
 
-kinase100_active_db_path = "/app/alphafold-multistate/db/KINASE100/kinase100.DFGin_All"
-kinase100_inactive_db_path = (
-    "/app/alphafold-multistate/db/KINASE100/kinase100.DFGout_All"
-)
+# kinase100_active_db_path = "/app/alphafold-multistate/db/KINASE100/kinase100.DFGin_All"
+# kinase100_inactive_db_path = (
+#     "/app/alphafold-multistate/db/KINASE100/kinase100.DFGout_All"
+# )
 
-kinase100_mmcif_active_db_path = "/app/alphafold-multistate/db/KINASE100/pdb_mmcif"
-kinase100_mmcif_inactive_db_path = "/app/alphafold-multistate/db/KINASE100/pdb_mmcif"
+# kinase100_mmcif_active_db_path = "/app/alphafold-multistate/db/KINASE100/pdb_mmcif"
+# kinase100_mmcif_inactive_db_path = "/app/alphafold-multistate/db/KINASE100/pdb_mmcif"
