@@ -149,9 +149,9 @@ flags.DEFINE_integer("num_recycle", 3, "The number of recycling")
 flags.DEFINE_boolean("multimer", False, "Whether to use the multimer modeling hack")
 flags.DEFINE_boolean("feature_only", False, "Whether to generate features.pkl only")
 flags.DEFINE_boolean("use_gpu_relax", False, 'Whether to relax on GPU.'
-        'Relax on GPU can be much faster than CPU, so it is '
-        'recommended to enable if possible. GPUs must be available'
-        ' if this setting is enabled.')
+                     'Relax on GPU can be much faster than CPU, so it is '
+                     'recommended to enable if possible. GPUs must be available'
+                     ' if this setting is enabled.')
 
 # presets
 flags.DEFINE_boolean("preset_refine", False, "Running refinement mode."

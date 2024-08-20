@@ -3,12 +3,12 @@
 import getpass
 import os
 
-jackhmmer_binary_path = "/opt/conda/bin/jackhmmer"
-hhblits_binary_path = "/opt/conda/bin/hhblits"
-hhsearch_binary_path = "/opt/conda/bin/hhsearch"
-kalign_binary_path = "/opt/conda/bin/kalign"
-hmmsearch_binary_path = "/opt/conda/bin/hmmsearch"
-hmmbuild_binary_path = "/opt/conda/bin/hmmbuild"
+jackhmmer_binary_path = "/opt/mamba/mamba/bin/jackhmmer"
+hhblits_binary_path = "/opt/mamba/mamba/bin/hhblits"
+hhsearch_binary_path = "/opt/mamba/mamba/bin/hhsearch"
+kalign_binary_path = "/opt/mamba/mamba/kalign"
+hmmsearch_binary_path = "/opt/mamba/mamba/hmmsearch"
+hmmbuild_binary_path = "/opt/mamba/mamba/hmmbuild"
 
 data_dir = "/app/alphafold_db"
 
