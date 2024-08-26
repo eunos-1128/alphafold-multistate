@@ -182,7 +182,7 @@ def predict_structure(
     fasta_name: str,
     msa_path: Union[str, List[str]],
     pdb_path: Union[str, List[str]],
-    output_dir_base: str,
+    output_dir: str,
     data_pipeline: Union[pipeline.DataPipeline, pipeline_multimer.DataPipeline],
     model_runners: Dict[str, model.RunModel],
     amber_relaxer: relax.AmberRelaxation,
@@ -191,11 +191,11 @@ def predict_structure(
     feature_only: bool,
     random_seed: int,
     ):
-    """Predicts structure using AlphaFold for the given sequence."""
-
+    """Predicts structure using AlphaFold for the given sequence."""        
+    
     logging.info('Predicting %s', fasta_name)
     timings = {}
-    output_dir = os.path.join(output_dir_base, fasta_name)
+    
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     msa_output_dir = os.path.join(output_dir, 'msas')
@@ -556,7 +556,7 @@ def main(argv):
             fasta_name=fasta_name,
             msa_path=msa_path,
             pdb_path=pdb_path,
-            output_dir_base=FLAGS.output_dir,
+            output_dir=FLAGS.output_dir,
             data_pipeline=data_pipeline,
             model_runners=model_runners,
             amber_relaxer=amber_relaxer,
@@ -564,7 +564,7 @@ def main(argv):
             template_mask=FLAGS.template_mask,
             feature_only=FLAGS.feature_only,
             random_seed=random_seed,
-            )
+     )
 
 if __name__ == '__main__':
     flags.mark_flags_as_required([
