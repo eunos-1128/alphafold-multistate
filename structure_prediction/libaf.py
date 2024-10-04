@@ -29,16 +29,21 @@ def remove_msa_for_template_aligned_regions(feature_dict):
         mask = feature_dict['template_all_atom_masks']
     elif 'template_all_atom_mask' in feature_dict:
         mask = feature_dict['template_all_atom_mask']
-    mask = (mask.sum(axis=(0,2)) > 0)
-    #
-    logging.info("Removing MSA features for %d residues.", len(np.where(mask)[0]))
-    #
-    # need to check further for multimer_mode
-    if 'deletion_matrix_int' in feature_dict:
-        feature_dict['deletion_matrix_int'][:,mask] = 0
+
+    if mask.size == 0:
+        logging.warning(f"Mask is empty: {mask.shape}")
     else:
-        feature_dict['deletion_matrix'][:,mask] = 0
-    feature_dict['msa'][:,mask] = 21
+        mask = (mask.sum(axis=(0,2)) > 0)
+
+        logging.info("Removing MSA features for %d residues.", len(np.where(mask)[0]))
+        #
+        # need to check further for multimer_mode
+        if 'deletion_matrix_int' in feature_dict:
+            feature_dict['deletion_matrix_int'][:,mask] = 0
+        else:
+            feature_dict['deletion_matrix'][:,mask] = 0
+        feature_dict['msa'][:,mask] = 21
+    
     return feature_dict
 
 def retrieve_custom_features(processed_feature_dict, feature_dict):
